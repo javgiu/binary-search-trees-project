@@ -33,6 +33,35 @@ class Tree {
 
     this.root = insertRec(value, this.root);
   }
+
+  getSuccessor(node) {
+    let current = node.right;
+    while (current !== null && current.left !== null) {
+      current = current.left;
+    }
+    return current;
+  }
+
+  deleteItem(value) {
+    const deleteRec = (value, node) => {
+      if (node === null) return node;
+      if (value > node.data) node.right = deleteRec(value, node.right);
+      else if (value < node.data) node.left = deleteRec(value, node.left);
+      else {
+        // Node with 0 or 1 child
+        if (node.left === null) return node.right;
+        if (node.right === null) return node.left;
+
+        // Node with 2 children
+        const successor = this.getSuccessor(node);
+        node.data = successor.data;
+        node.right = deleteRec(successor.data, node.right);
+      }
+      return node;
+    };
+
+    this.root = deleteRec(value, this.root);
+  }
 }
 
 const array = [1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9];
@@ -52,5 +81,6 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 };
 
 tree.insert(10);
+tree.deleteItem(7);
 
 prettyPrint(tree.root);
