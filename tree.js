@@ -62,6 +62,56 @@ class Tree {
 
     this.root = deleteRec(value, this.root);
   }
+
+  find(value) {
+    let currentNode = this.root;
+    while (currentNode !== null) {
+      if (currentNode.data > value) currentNode = currentNode.left;
+      else if (currentNode.data < value) currentNode = currentNode.right;
+      else if (currentNode.data === value) break;
+    }
+    if (currentNode === null) console.log("Value not found");
+    else {
+      console.log(currentNode);
+      return currentNode;
+    }
+  }
+
+  levelOrderForEach(callback) {
+    if (!callback) throw new Error("Callback required");
+    const queue = [];
+    queue.push(this.root);
+    while (queue.length > 0) {
+      const currentNode = queue[0];
+      callback(currentNode);
+      if (currentNode.left !== null) queue.push(currentNode.left);
+      if (currentNode.right !== null) queue.push(currentNode.right);
+      queue.shift();
+    }
+  }
+
+  levelOrderRecursiveForEach(callback) {
+    if (!callback) throw new Error("Callback required");
+
+    function recursive(queue) {
+      if (queue.length === 0) return;
+
+      const node = queue.shift();
+      callback(node);
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+
+      recursive(queue);
+    }
+
+    recursive([this.root]);
+  }
+
+  inOrderForEach(callback) {}
+
+  preOrderForEach(callback) {}
+
+  postOrderForEach(callback) {}
 }
 
 const array = [1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9];
@@ -82,5 +132,7 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 
 tree.insert(10);
 tree.deleteItem(7);
+tree.find(5);
+tree.levelOrderRecursiveForEach();
 
 prettyPrint(tree.root);
