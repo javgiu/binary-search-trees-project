@@ -65,16 +65,12 @@ class Tree {
 
   find(value) {
     let currentNode = this.root;
-    while (currentNode !== null) {
+    while (currentNode) {
       if (currentNode.data > value) currentNode = currentNode.left;
       else if (currentNode.data < value) currentNode = currentNode.right;
       else if (currentNode.data === value) break;
     }
-    if (currentNode === null) console.log("Value not found");
-    else {
-      console.log(currentNode);
-      return currentNode;
-    }
+    return currentNode;
   }
 
   levelOrderForEach(callback) {
@@ -139,6 +135,54 @@ class Tree {
     }
     recursive(this.root);
   }
+
+  height(value) {
+    const node = this.find(value);
+    if (node) return calculateHeight(node);
+    else return null;
+
+    function calculateHeight(node) {
+      if (node == null) return 0;
+
+      const leftHeight = calculateHeight(node.left);
+      const rightHeight = calculateHeight(node.right);
+
+      return 1 + Math.max(leftHeight, rightHeight);
+    }
+  }
+
+  depth(value) {
+    let currentNode = this.root;
+    if (currentNode == null) return null;
+    let depth = 0;
+    while (currentNode) {
+      if (value > currentNode.data) currentNode = currentNode.right;
+      else if (value < currentNode.data) currentNode = currentNode.left;
+      else if (value === currentNode.data) break;
+      depth++;
+    }
+    if (currentNode) return depth;
+    else return null;
+  }
+
+  depthRecursive(value) {
+    function calculateDepth(node) {
+      if (node == null) return null;
+      if (node.data === value) return 0;
+      if (value > node.data) {
+        const rightDepth = calculateDepth(node.right);
+        if (rightDepth === null) return null;
+        return 1 + rightDepth;
+      }
+      if (value < node.data) {
+        const leftDepth = calculateDepth(node.left);
+        if (leftDepth === null) return null;
+        return 1 + leftDepth;
+      }
+    }
+
+    return calculateDepth(this.root);
+  }
 }
 
 const array = [1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9];
@@ -156,6 +200,8 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
   }
 };
+
+// Testing //
 
 console.log("Testing...");
 console.log("Original tree");
@@ -186,3 +232,15 @@ tree.inOrderForEach((node) => console.log(node.data));
 
 console.log("Post Order Traversal");
 tree.postOrderForEach((node) => console.log(node.data));
+
+console.log("Get height of 3");
+prettyPrint(tree.root);
+console.log(tree.height(5));
+
+console.log("Get depth of 6");
+prettyPrint(tree.root);
+console.log(tree.depth(6));
+
+console.log("Get recursive depth of 5");
+prettyPrint(tree.root);
+console.log(tree.depthRecursive(5));
