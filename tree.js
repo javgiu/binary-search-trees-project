@@ -107,11 +107,38 @@ class Tree {
     recursive([this.root]);
   }
 
-  inOrderForEach(callback) {}
+  preOrderForEach(callback) {
+    if (!callback) throw new Error("Callback required");
+    function recursive(node) {
+      if (node == null) return;
+      callback(node);
+      recursive(node.left);
+      recursive(node.right);
+    }
+    recursive(this.root);
+  }
 
-  preOrderForEach(callback) {}
+  inOrderForEach(callback) {
+    if (!callback) throw new Error("Callback required");
+    function recursive(node) {
+      if (!node) return;
+      recursive(node.left);
+      callback(node);
+      recursive(node.right);
+    }
+    recursive(this.root);
+  }
 
-  postOrderForEach(callback) {}
+  postOrderForEach(callback) {
+    if (!callback) throw new Error("Callback required");
+    function recursive(node) {
+      if (!node) return;
+      recursive(node.left);
+      recursive(node.right);
+      callback(node);
+    }
+    recursive(this.root);
+  }
 }
 
 const array = [1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9];
@@ -130,9 +157,32 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   }
 };
 
-tree.insert(10);
-tree.deleteItem(7);
-tree.find(5);
-tree.levelOrderRecursiveForEach();
-
+console.log("Testing...");
+console.log("Original tree");
 prettyPrint(tree.root);
+
+console.log("Inseting value 10...");
+tree.insert(10);
+prettyPrint(tree.root);
+
+console.log("Deleting value 7...");
+tree.deleteItem(7);
+prettyPrint(tree.root);
+
+console.log("Looking for value 7...");
+tree.find(7);
+
+console.log("Looking for value 10...");
+tree.find(10);
+
+console.log("Level Order Traversal");
+tree.levelOrderRecursiveForEach((node) => console.log(node.data));
+
+console.log("Pre Order Traversal");
+tree.preOrderForEach((node) => console.log(node.data));
+
+console.log("In Order Traversal");
+tree.inOrderForEach((node) => console.log(node.data));
+
+console.log("Post Order Traversal");
+tree.postOrderForEach((node) => console.log(node.data));
