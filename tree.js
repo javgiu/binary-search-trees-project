@@ -183,9 +183,55 @@ class Tree {
 
     return calculateDepth(this.root);
   }
+
+  isBalanced() {
+    function calculateHeight(node) {
+      if (node == null) return 0;
+
+      const leftHeight = calculateHeight(node.left);
+      const rightHeight = calculateHeight(node.right);
+
+      return 1 + Math.max(leftHeight, rightHeight);
+    }
+    function checkBalance(node) {
+      if (node == null) return true;
+      const leftHeight = calculateHeight(node.left);
+      const rightHeight = calculateHeight(node.right);
+      if (Math.abs(leftHeight - rightHeight) > 1) return false;
+      else {
+        if (checkBalance(node.left) === false) return false;
+        if (checkBalance(node.right) === false) return false;
+        return true;
+      }
+    }
+
+    return checkBalance(this.root);
+  }
+
+  rebalance() {
+    const orderedArray = [];
+    function inOrderAuxiliar(node) {
+      if (!node) return;
+      inOrderAuxiliar(node.left);
+      orderedArray.push(node.data);
+      inOrderAuxiliar(node.right);
+    }
+
+    inOrderAuxiliar(this.root);
+    this.root = this.buildTree(orderedArray);
+  }
 }
 
-const array = [1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9];
+function createRandomAarray(arrayLength) {
+  const array = [];
+  for (let i = 0; i <= arrayLength; i++) {
+    const randomNumber = Math.floor(Math.random() * 100) + 1;
+    array.push(randomNumber);
+  }
+  return array;
+}
+
+const array = createRandomAarray(20);
 const tree = new Tree(array);
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -203,23 +249,23 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 
 // Testing //
 
-console.log("Testing...");
-console.log("Original tree");
+prettyPrint(tree.root);
+console.log("Checking balance", tree.isBalanced());
+
+console.log("Inserting 50 more values...");
+for (let i = 0; i < 50; i++) {
+  tree.insert(Math.floor(Math.random() * (1000 - 100 + 1)) + 100);
+}
 prettyPrint(tree.root);
 
-console.log("Inseting value 10...");
-tree.insert(10);
+console.log("Checking balance", tree.isBalanced());
+
+console.log("Rebalancing tree");
+tree.rebalance();
+
 prettyPrint(tree.root);
 
-console.log("Deleting value 7...");
-tree.deleteItem(7);
-prettyPrint(tree.root);
-
-console.log("Looking for value 7...");
-tree.find(7);
-
-console.log("Looking for value 10...");
-tree.find(10);
+console.log("Checking balance", tree.isBalanced());
 
 console.log("Level Order Traversal");
 tree.levelOrderRecursiveForEach((node) => console.log(node.data));
@@ -233,14 +279,49 @@ tree.inOrderForEach((node) => console.log(node.data));
 console.log("Post Order Traversal");
 tree.postOrderForEach((node) => console.log(node.data));
 
-console.log("Get height of 3");
-prettyPrint(tree.root);
-console.log(tree.height(5));
+// More tests //
+//
+// console.log("Testing...");
+// console.log("Original tree");
+// prettyPrint(tree.root);
 
-console.log("Get depth of 6");
-prettyPrint(tree.root);
-console.log(tree.depth(6));
+// console.log("Inseting value 10...");
+// tree.insert(10);
+// prettyPrint(tree.root);
 
-console.log("Get recursive depth of 5");
-prettyPrint(tree.root);
-console.log(tree.depthRecursive(5));
+// console.log("Deleting value 7...");
+// tree.deleteItem(7);
+// prettyPrint(tree.root);
+
+// console.log("Looking for value 7...");
+// tree.find(7);
+
+// console.log("Looking for value 10...");
+// tree.find(10);
+
+// console.log("Level Order Traversal");
+// tree.levelOrderRecursiveForEach((node) => console.log(node.data));
+
+// console.log("Pre Order Traversal");
+// tree.preOrderForEach((node) => console.log(node.data));
+
+// console.log("In Order Traversal");
+// tree.inOrderForEach((node) => console.log(node.data));
+
+// console.log("Post Order Traversal");
+// tree.postOrderForEach((node) => console.log(node.data));
+
+// console.log("Get height of 3");
+// prettyPrint(tree.root);
+// console.log(tree.height(5));
+
+// console.log("Get depth of 6");
+// prettyPrint(tree.root);
+// console.log(tree.depth(6));
+
+// console.log("Get recursive depth of 5");
+// prettyPrint(tree.root);
+// console.log(tree.depthRecursive(5));
+
+// console.log("Checking Tree Balance...");
+// console.log(tree.isBalanced());
