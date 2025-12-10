@@ -25,7 +25,7 @@ class Tree {
 
   insert(value) {
     const insertRec = (value, node) => {
-      if (node === null) return new Node(value);
+      if (!node) return new Node(value);
       if (value < node.data) node.left = insertRec(value, node.left);
       else node.right = insertRec(value, node.right);
       return node;
@@ -44,13 +44,13 @@ class Tree {
 
   deleteItem(value) {
     const deleteRec = (value, node) => {
-      if (node === null) return node;
+      if (!node) return null;
       if (value > node.data) node.right = deleteRec(value, node.right);
       else if (value < node.data) node.left = deleteRec(value, node.left);
       else {
         // Node with 0 or 1 child
-        if (node.left === null) return node.right;
-        if (node.right === null) return node.left;
+        if (!node.left) return node.right;
+        if (!node.right) return node.left;
 
         // Node with 2 children
         const successor = this.getSuccessor(node);
@@ -138,22 +138,22 @@ class Tree {
 
   height(value) {
     const node = this.find(value);
-    if (node) return calculateHeight(node);
+    if (node) return this.#calculateHeight(node);
     else return null;
+  }
 
-    function calculateHeight(node) {
-      if (node == null) return 0;
+  #calculateHeight(node) {
+    if (!node) return 0;
 
-      const leftHeight = calculateHeight(node.left);
-      const rightHeight = calculateHeight(node.right);
+    const leftHeight = this.#calculateHeight(node.left);
+    const rightHeight = this.#calculateHeight(node.right);
 
-      return 1 + Math.max(leftHeight, rightHeight);
-    }
+    return 1 + Math.max(leftHeight, rightHeight);
   }
 
   depth(value) {
     let currentNode = this.root;
-    if (currentNode == null) return null;
+    if (!currentNode) return null;
     let depth = 0;
     while (currentNode) {
       if (value > currentNode.data) currentNode = currentNode.right;
@@ -167,7 +167,7 @@ class Tree {
 
   depthRecursive(value) {
     function calculateDepth(node) {
-      if (node == null) return null;
+      if (!node) return null;
       if (node.data === value) return 0;
       if (value > node.data) {
         const rightDepth = calculateDepth(node.right);
@@ -185,39 +185,24 @@ class Tree {
   }
 
   isBalanced() {
-    function calculateHeight(node) {
-      if (node == null) return 0;
-
-      const leftHeight = calculateHeight(node.left);
-      const rightHeight = calculateHeight(node.right);
-
-      return 1 + Math.max(leftHeight, rightHeight);
-    }
-    function checkBalance(node) {
-      if (node == null) return true;
-      const leftHeight = calculateHeight(node.left);
-      const rightHeight = calculateHeight(node.right);
+    const checkBalance = (node) => {
+      if (!node) return true;
+      const leftHeight = this.#calculateHeight(node.left);
+      const rightHeight = this.#calculateHeight(node.right);
       if (Math.abs(leftHeight - rightHeight) > 1) return false;
       else {
         if (checkBalance(node.left) === false) return false;
         if (checkBalance(node.right) === false) return false;
         return true;
       }
-    }
+    };
 
     return checkBalance(this.root);
   }
 
   rebalance() {
     const orderedArray = [];
-    function inOrderAuxiliar(node) {
-      if (!node) return;
-      inOrderAuxiliar(node.left);
-      orderedArray.push(node.data);
-      inOrderAuxiliar(node.right);
-    }
-
-    inOrderAuxiliar(this.root);
+    this.inOrderForEach((node) => orderedArray.push(node.data));
     this.root = this.buildTree(orderedArray);
   }
 }
