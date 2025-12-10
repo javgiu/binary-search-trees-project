@@ -68,7 +68,7 @@ class Tree {
     while (currentNode) {
       if (currentNode.data > value) currentNode = currentNode.left;
       else if (currentNode.data < value) currentNode = currentNode.right;
-      else if (currentNode.data === value) break;
+      else if (currentNode.data === value) return currentNode;
     }
     return currentNode;
   }
@@ -143,7 +143,7 @@ class Tree {
   }
 
   #calculateHeight(node) {
-    if (!node) return 0;
+    if (!node) return -1;
 
     const leftHeight = this.#calculateHeight(node.left);
     const rightHeight = this.#calculateHeight(node.right);
@@ -186,18 +186,18 @@ class Tree {
 
   isBalanced() {
     const checkBalance = (node) => {
-      if (!node) return true;
-      const leftHeight = this.#calculateHeight(node.left);
-      const rightHeight = this.#calculateHeight(node.right);
-      if (Math.abs(leftHeight - rightHeight) > 1) return false;
+      if (!node) return -1;
+      const leftHeight = checkBalance(node.left);
+      if (leftHeight === -1) return -1;
+      const rightHeight = checkBalance(node.right);
+      if (rightHeight === -1) return -1;
+      if (Math.abs(leftHeight - rightHeight) > 1) return -1;
       else {
-        if (checkBalance(node.left) === false) return false;
-        if (checkBalance(node.right) === false) return false;
-        return true;
+        return 1 + Math.max(leftHeight, rightHeight);
       }
     };
 
-    return checkBalance(this.root);
+    return checkBalance(this.root) !== -1;
   }
 
   rebalance() {
